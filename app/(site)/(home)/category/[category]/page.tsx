@@ -1,0 +1,56 @@
+import { Marquee, Product } from "@/components";
+import { getBrandList, getCategoryList } from "@/sanity/utils";
+import React from "react";
+
+type Props = {
+  params: { category: string };
+};
+
+const CategoryPage = async ({ params }: Props) => {
+  const slug = params.category;
+  const [category, brandList] = await Promise.all([
+    getCategoryList(slug),
+    getBrandList(),
+  ]);
+
+  return (
+    <>
+      <div>
+        <p className="mb-2 text-sm leading-6 font-semibold text-sky-500 dark:text-sky-400">
+          Category
+        </p>
+        <div className="mb-16">
+          <div>
+            <div className="flex items-center">
+              <h1 className="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tighter dark:text-slate-200">
+                {category.name}
+              </h1>
+            </div>
+            <p className="mt-2 text-lg text-slate-700 dark:text-slate-400">
+              {category.description}
+            </p>
+          </div>
+
+          <div>
+            <div className="flex flex-wrap justify-center gap-4 mt-5 w-full">
+              {category &&
+                category.products.map((product) => (
+                  <Product
+                    itemName={product.name}
+                    itemPrice={product.price}
+                    itemUrl={product.slug}
+                    key={product._id}
+                    itemDesc={product.description}
+                    imageUrl={product.image}
+                  />
+                ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <Marquee brands={brandList} />
+    </>
+  );
+};
+
+export default CategoryPage;
